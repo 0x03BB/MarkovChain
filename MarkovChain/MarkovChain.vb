@@ -17,12 +17,12 @@
         For y = 0 To StateCount - 1
             Dim chance As Double = 0R
             For x = 0 To StateCount - 2
-                If chances(y, x) < 0R OrElse chances(y, x) > 1.0R Then Throw New ArgumentException()
+                If chances(y, x) < -0.000001R OrElse chances(y, x) > 1.000001R Then Throw New ArgumentException()
                 chance += chances(y, x)
                 Me.Chances(y, x) = chance
             Next
             chance = 1 - chance
-            If chance < 0R OrElse chance > 1.0R Then Throw New ArgumentException()
+            If chance < -0.000001R OrElse chance > 1.000001R Then Throw New ArgumentException()
         Next
     End Sub
 
