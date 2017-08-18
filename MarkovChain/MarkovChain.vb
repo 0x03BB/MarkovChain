@@ -45,11 +45,12 @@
 
         Friend Sub New(markovChain As MarkovChain)
             Me.MarkovChain = markovChain
-            State = 0
+            State = -1
         End Sub
 
         Public ReadOnly Property Current As String Implements IEnumerator(Of String).Current
             Get
+                If State = -1 Then Throw New InvalidOperationException("""MoveNext"" must be called after construction or calling ""Reset"" for ""Current"" to have a valid value.")
                 Return MarkovChain.Strings(State)
             End Get
         End Property
@@ -65,19 +66,24 @@
         End Sub
 
         Public Sub Reset() Implements IEnumerator.Reset
-            State = 0
+            State = -1
         End Sub
 
         Public Function MoveNext() As Boolean Implements IEnumerator.MoveNext
-            Dim nextState = rng.NextDouble()
-            For x = 0 To MarkovChain.StateCount - 2
-                If nextState < MarkovChain.Chances(State, x) Then
-                    State = x
-                    Return True
-                End If
-            Next
-            State = MarkovChain.StateCount - 1
-            Return True
+            If State <> -1 Then
+                Dim nextState = rng.NextDouble()
+                For x = 0 To MarkovChain.StateCount - 2
+                    If nextState < MarkovChain.Chances(State, x) Then
+                        State = x
+                        Return True
+                    End If
+                Next
+                State = MarkovChain.StateCount - 1
+                Return True
+            Else
+                State = 0
+                Return True
+            End If
         End Function
     End Structure
 End Class
