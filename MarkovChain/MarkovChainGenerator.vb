@@ -1,6 +1,9 @@
 ﻿Public Module MarkovChainGenerator
     Public Function CreateMarkovChain(corpus As String) As MarkovChain
-        Dim reg = New Text.RegularExpressions.Regex("([-\w]+|[.,;:])", Text.RegularExpressions.RegexOptions.Compiled)
+        If Strings.Left(corpus, 2) <> vbCrLf Then corpus = vbCrLf & corpus
+        If Strings.Right(corpus, 2) <> vbCrLf Then corpus = corpus & vbCrLf
+
+        Dim reg = New Text.RegularExpressions.Regex("([-\w']+|[.,;:]|\r\n)", Text.RegularExpressions.RegexOptions.Compiled)
         Dim captures = reg.Matches(corpus)
 
         Dim dic = New SortedDictionary(Of String, Dictionary(Of String, Integer))
@@ -22,11 +25,11 @@
             End If
         Next
 
-        Dim strings = dic.Keys.ToArray
+        Dim states = dic.Keys.ToArray
 
         Dim lookup = New Dictionary(Of String, Integer)
         For i = 0 To dic.Keys.Count - 1
-            lookup.Add(strings(i), i)
+            lookup.Add(states(i), i)
         Next
 
         Dim chances = New Double(dic.Keys.Count - 1, dic.Keys.Count - 2) {}
@@ -42,6 +45,6 @@
             Next
         Next
 
-        Return New MarkovChain(strings, chances)
+        Return New MarkovChain(states, chances)
     End Function
 End Module
