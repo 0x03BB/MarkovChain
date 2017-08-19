@@ -1,17 +1,17 @@
 ﻿Public Class MarkovChain
     Implements IEnumerable(Of String)
 
-    Private ReadOnly Strings As String()
+    Private ReadOnly States As String()
     Private ReadOnly Chances As Double(,)
     Private ReadOnly StateCount As Integer
 
-    Public Sub New(strings As String(), chances As Double(,))
+    Public Sub New(states As String(), chances As Double(,))
         StateCount = chances.GetLength(0)
-        If strings.Length <> StateCount Then Throw New ArgumentException("The length of ""strings"" does not equal the first dimension of ""chances""", "chances")
+        If states.Length <> StateCount Then Throw New ArgumentException("The length of ""strings"" does not equal the first dimension of ""chances""", "chances")
         If StateCount <> chances.GetLength(1) + 1 Then Throw New ArgumentException("The first dimension of ""chances"" is not one larger than the second dimension of ""chances""", "chances")
 
-        Me.Strings = New String(StateCount - 1) {}
-        strings.CopyTo(Me.Strings, 0)
+        Me.States = New String(StateCount - 1) {}
+        states.CopyTo(Me.States, 0)
 
         Me.Chances = New Double(StateCount - 1, StateCount - 2) {}
         For y = 0 To StateCount - 1
@@ -51,7 +51,7 @@
         Public ReadOnly Property Current As String Implements IEnumerator(Of String).Current
             Get
                 If State = -1 Then Throw New InvalidOperationException("""MoveNext"" must be called after construction or calling ""Reset"" for ""Current"" to have a valid value.")
-                Return MarkovChain.Strings(State)
+                Return MarkovChain.States(State)
             End Get
         End Property
 
